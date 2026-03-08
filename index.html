@@ -407,6 +407,28 @@
     letter-spacing: 1px;
   }
 
+  /* CONFIG DIVIDER */
+  .config-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0 16px;
+  }
+  .config-divider::before,
+  .config-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+  .config-divider span {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
   /* VERSION PICKER */
   .version-picker { display: flex; flex-direction: column; gap: 8px; }
 
@@ -1423,6 +1445,31 @@
       <div class="section-title">Define Your Dream Modpack</div>
       <div class="section-desc">Tell us what kind of gameplay experience you want. The more detail you provide, the better the results.</div>
 
+      <textarea 
+        class="dream-textarea" 
+        id="dreamInput" 
+        placeholder="Example: I want technology and magic combined, building complex machines and exploring magical worlds with friends. Good graphics but still decent performance..."
+      ></textarea>
+
+      <div class="suggestion-chips" id="chips">
+        <div class="chip" onclick="addChip(this, 'Technology mods (pipes, machines, automation)')">⚙️ Technology</div>
+        <div class="chip" onclick="addChip(this, 'Magic and spell mods')">🔮 Magic</div>
+        <div class="chip" onclick="addChip(this, 'Hardcore survival mods')">⚔️ Survival</div>
+        <div class="chip" onclick="addChip(this, 'Adventure and dungeon mods')">🗺️ Adventure</div>
+        <div class="chip" onclick="addChip(this, 'Graphics and shader mods')">✨ Graphics</div>
+        <div class="chip" onclick="addChip(this, 'Multiplayer and server mods')">👥 Multiplayer</div>
+        <div class="chip" onclick="addChip(this, 'New dimensions and biome mods')">🌍 New Dimensions</div>
+        <div class="chip" onclick="addChip(this, 'Farm and agriculture mods')">🌾 Farming</div>
+        <div class="chip" onclick="addChip(this, 'RPG and leveling system mods')">📊 RPG / Leveling</div>
+        <div class="chip" onclick="addChip(this, 'Performance optimization mods')">🚀 Performance</div>
+        <div class="chip" onclick="addChip(this, 'Building and decoration mods')">🏗️ Building</div>
+        <div class="chip" onclick="addChip(this, 'Minimap and HUD mods')">🗺️ HUD/Minimap</div>
+      </div>
+
+      <div class="config-divider">
+        <span>⚙️ SETTINGS</span>
+      </div>
+
       <!-- SNAPSHOT TOGGLE -->
       <div class="snapshot-row">
         <span class="snapshot-label">VERSION TYPE</span>
@@ -1600,7 +1647,7 @@
                 placeholder="e.g. 1.21.4, 1.12.2, 24w14a..."
                 oninput="syncCustomVersion()"
               />
-              <div style="font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text3); margin-top:6px; letter-spacing:1px;">
+              <div style="font-family:'Roboto Mono',monospace; font-size:10px; color:var(--text3); margin-top:6px; letter-spacing:1px;">
                 TYPE ANY VERSION — including custom/modded builds
               </div>
             </div>
@@ -1623,27 +1670,6 @@
             <option value="high-end PC">High-End PC (16GB+ RAM)</option>
           </select>
         </div>
-      </div>
-
-      <textarea 
-        class="dream-textarea" 
-        id="dreamInput" 
-        placeholder="Example: I want technology and magic combined, building complex machines and exploring magical worlds with friends. Good graphics but still decent performance..."
-      ></textarea>
-
-      <div class="suggestion-chips" id="chips">
-        <div class="chip" onclick="addChip(this, 'Technology mods (pipes, machines, automation)')">⚙️ Technology</div>
-        <div class="chip" onclick="addChip(this, 'Magic and spell mods')">🔮 Magic</div>
-        <div class="chip" onclick="addChip(this, 'Hardcore survival mods')">⚔️ Survival</div>
-        <div class="chip" onclick="addChip(this, 'Adventure and dungeon mods')">🗺️ Adventure</div>
-        <div class="chip" onclick="addChip(this, 'Graphics and shader mods')">✨ Graphics</div>
-        <div class="chip" onclick="addChip(this, 'Multiplayer and server mods')">👥 Multiplayer</div>
-        <div class="chip" onclick="addChip(this, 'New dimensions and biome mods')">🌍 New Dimensions</div>
-        <div class="chip" onclick="addChip(this, 'Farm and agriculture mods')">🌾 Farming</div>
-        <div class="chip" onclick="addChip(this, 'RPG and leveling system mods')">📊 RPG / Leveling</div>
-        <div class="chip" onclick="addChip(this, 'Performance optimization mods')">🚀 Performance</div>
-        <div class="chip" onclick="addChip(this, 'Building and decoration mods')">🏗️ Building</div>
-        <div class="chip" onclick="addChip(this, 'Minimap and HUD mods')">🗺️ HUD/Minimap</div>
       </div>
 
       <div id="errorBox" class="error-box">❌ An error occurred. Please try again.</div>
