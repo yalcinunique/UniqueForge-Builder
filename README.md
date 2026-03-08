@@ -1,5 +1,5 @@
 
-# 🛠️ UniqueForge Builder
+# 🛠️ UniqueForge Modpack Builder
 ### AI-Powered & Modern Minecraft Modpack Generator
 
 ![UniqueForge Banner](images/banner.png)
