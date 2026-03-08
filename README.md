@@ -1,3 +1,4 @@
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](SENIN_GITHUB_PAGES_LINKIN)
 # 🛠️ UniqueForge Builder
 ### AI-Powered & Modern Minecraft Modpack Generator
 
