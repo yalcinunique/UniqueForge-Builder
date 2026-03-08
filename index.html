@@ -2026,98 +2026,86 @@
   });
 
   function setLang(lang) {
+    if (!LANGS[lang]) return;
     currentLang = lang;
     const t = LANGS[lang];
 
-    // Update toggle button
-    document.getElementById('currentFlag').textContent = t.flag;
-    document.getElementById('currentLangCode').textContent = t.code;
+    const safe = (sel, fn) => { try { const el = document.querySelector(sel); if (el) fn(el); } catch(e){} };
+    const safeId = (id, fn) => { try { const el = document.getElementById(id); if (el) fn(el); } catch(e){} };
 
-    // Update active state in dropdown
+    safeId('currentFlag', el => el.textContent = t.flag);
+    safeId('currentLangCode', el => el.textContent = t.code);
+
     document.querySelectorAll('.lang-option').forEach(el => {
       el.classList.toggle('active', el.getAttribute('data-lang') === lang);
     });
 
-    // Close dropdown
-    document.getElementById('langToggle').classList.remove('open');
-    document.getElementById('langDropdown').classList.remove('open');
+    safeId('langToggle', el => el.classList.remove('open'));
+    safeId('langDropdown', el => el.classList.remove('open'));
 
-    // Update logo sub
-    document.querySelector('.logo-sub').textContent = t.logoSub;
+    safe('.logo-sub', el => el.textContent = t.logoSub);
+    safe('#step1 span', el => el.textContent = t.step1);
+    safe('#step2 span', el => el.textContent = t.step2);
+    safe('#step3 span', el => el.textContent = t.step3);
+    safe('#step4 span', el => el.textContent = t.step4);
+    safe('.section-label', el => el.textContent = t.sectionLabel);
+    safe('.section-title', el => el.textContent = t.sectionTitle);
+    safe('.section-desc', el => el.textContent = t.sectionDesc);
 
-    // Update steps
-    document.querySelector('#step1 span').textContent = t.step1;
-    document.querySelector('#step2 span').textContent = t.step2;
-    document.querySelector('#step3 span').textContent = t.step3;
-    document.querySelector('#step4 span').textContent = t.step4;
-
-    // Update input section
-    document.querySelector('.section-label').textContent = t.sectionLabel;
-    document.querySelector('.section-title').textContent = t.sectionTitle;
-    document.querySelector('.section-desc').textContent = t.sectionDesc;
-
-    // Update config labels
+    // Config labels — safe index access
     const labels = document.querySelectorAll('.config-group label');
-    labels[0].textContent = t.versionLabel;
-    labels[1].textContent = t.loaderLabel;
-    labels[2].textContent = t.perfLabel;
+    if (labels[0]) labels[0].textContent = t.versionLabel;
+    if (labels[1]) labels[1].textContent = t.loaderLabel;
+    if (labels[2]) labels[2].textContent = t.perfLabel;
 
-    // Update perf select options
-    const perfSelect = document.getElementById('perfTarget');
-    const perfOptions = perfSelect.options;
-    t.perfOptions.forEach((opt, i) => { if (perfOptions[i]) perfOptions[i].text = opt; });
+    // Perf select options
+    try {
+      const perfSelect = document.getElementById('perfTarget');
+      if (perfSelect && t.perfOptions) {
+        t.perfOptions.forEach((opt, i) => { if (perfSelect.options[i]) perfSelect.options[i].text = opt; });
+      }
+    } catch(e) {}
 
-    // Update textarea placeholder
-    document.getElementById('dreamInput').placeholder = t.placeholder;
+    safeId('dreamInput', el => el.placeholder = t.placeholder);
+    safeId('submitBtn', el => el.textContent = t.submitBtn);
 
-    // Update submit button
-    document.getElementById('submitBtn').textContent = t.submitBtn;
+    safe('.loading-title', el => el.innerHTML = t.loadingTitle + '<span class="cursor">_</span>');
+    safe('#ls1 span', el => el.textContent = t.ls1);
+    safe('#ls2 span', el => el.textContent = t.ls2);
+    safe('#ls3 span', el => el.textContent = t.ls3);
+    safe('#ls4 span', el => el.textContent = t.ls4);
+    safe('#ls5 span', el => el.textContent = t.ls5);
 
-    // Update loading section
-    document.querySelector('.loading-title').innerHTML = t.loadingTitle + '<span class="cursor">_</span>';
-    document.querySelector('#ls1 span').textContent = t.ls1;
-    document.querySelector('#ls2 span').textContent = t.ls2;
-    document.querySelector('#ls3 span').textContent = t.ls3;
-    document.querySelector('#ls4 span').textContent = t.ls4;
-    document.querySelector('#ls5 span').textContent = t.ls5;
+    // Filter buttons
+    try {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const filterTypes = ['all','essential','recommended','optional'];
+      const filterIcons = ['⚔️','💎','🗡️','🪄'];
+      const filterLbls = [t.filterAll, t.filterEssential, t.filterRecommended, t.filterOptional];
+      filterBtns.forEach((btn, i) => {
+        if (i >= filterTypes.length) return;
+        const countEl = btn.querySelector('.filter-count');
+        const countHtml = countEl ? ` <span class="filter-count">${countEl.textContent}</span>` : '';
+        btn.innerHTML = `${filterIcons[i]} ${filterLbls[i]}${countHtml}`;
+        btn.setAttribute('data-filter', filterTypes[i]);
+      });
+    } catch(e) {}
 
-    // Update filter buttons
-    // Update filter buttons text (keep counts if results are showing)
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const filterTypes = ['all','essential','recommended','optional'];
-    const filterIcons = ['⚔️','💎','🗡️','🪄'];
-    const filterLbls = [t.filterAll, t.filterEssential, t.filterRecommended, t.filterOptional];
-    filterBtns.forEach((btn, i) => {
-      if (i >= filterTypes.length) return;
-      const countEl = btn.querySelector('.filter-count');
-      const countHtml = countEl ? ` <span class="filter-count">${countEl.textContent}</span>` : '';
-      btn.innerHTML = `${filterIcons[i]} ${filterLbls[i]}${countHtml}`;
-      btn.setAttribute('data-filter', filterTypes[i]);
-    });
+    // Chips
+    try {
+      const chipEls = document.querySelectorAll('#chips .chip');
+      chipEls.forEach((el, i) => {
+        if (t.chips && t.chips[i]) el.textContent = t.chips[i];
+        el.onclick = null;
+        const chipIdx = i;
+        el.addEventListener('click', function() { addChipByIndex(this, chipIdx); });
+      });
+    } catch(e) {}
 
-    // Update chips
-    const chipEls = document.querySelectorAll('#chips .chip');
-    chipEls.forEach((el, i) => {
-      if (t.chips[i]) el.childNodes[0].textContent = t.chips[i].replace(/^(\S+\s)/, '$1');
-      // re-label full chip text
-      el.textContent = t.chips[i] || el.textContent;
-      // restore onclick
-      el.onclick = null;
-      const chipIdx = i;
-      el.addEventListener('click', function() { addChipByIndex(this, chipIdx); });
-    });
-
-    // Update footer
-    document.querySelector('.footer-inner span').textContent = t.footerText;
-
-    // Update action buttons
-    const resetBtn = document.getElementById('resetBtn');
-    const copyBtnEl = document.getElementById('copyBtn');
-    if (resetBtn) resetBtn.textContent = t.resetBtn;
-    if (copyBtnEl) copyBtnEl.textContent = t.copyBtn;
-
-    // Update filter label
-    document.querySelector('.filter-label').textContent = 'FILTER //';
+    safe('.footer-inner span', el => el.textContent = t.footerText);
+    safeId('resetBtn', el => el.textContent = t.resetBtn);
+    safeId('copyBtn', el => el.textContent = t.copyBtn);
+    safe('.filter-label', el => el.textContent = 'FILTER //');
   }
 
   function addChipByIndex(el, idx) {
@@ -2293,11 +2281,8 @@
       return;
     }
 
-    // Auto-detect language from prompt and switch UI
+    // Auto-detect language — will apply to results, not during loading
     const detectedLang = detectPromptLang(dream);
-    if (detectedLang !== currentLang && LANGS[detectedLang]) {
-      setLang(detectedLang);
-    }
 
     // Hide input, show loading
     document.getElementById('inputSection').style.display = 'none';
@@ -2425,6 +2410,7 @@ PRIORITY: essential 7-9 (core), recommended 9-12 (enhancing), optional 4-7 (bonu
       if (!result.mods || !Array.isArray(result.mods) || result.mods.length === 0) {
         throw new Error('Empty mod list returned');
       }
+      result._detectedLang = detectedLang; // pass lang to showResults
 
       completeLoadingInstantly();
       await new Promise(r => setTimeout(r, 300));
@@ -2444,6 +2430,11 @@ PRIORITY: essential 7-9 (core), recommended 9-12 (enhancing), optional 4-7 (bonu
   }
 
   function showResults(data, mcVersion, modLoader) {
+    // Switch UI language to match the detected prompt language
+    if (data._detectedLang && LANGS[data._detectedLang]) {
+      setLang(data._detectedLang);
+    }
+
     document.getElementById('loadingSection').classList.remove('visible');
     document.getElementById('resultsSection').classList.add('visible');
     setStep(3);
