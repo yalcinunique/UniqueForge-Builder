@@ -1918,6 +1918,57 @@
 </div>
 
 <script>
+  // ── API KEY MANAGEMENT (must be first — used by all fetch calls) ─────
+  const API_KEY_STORAGE = 'uf_api_key';
+
+  function getApiKey() {
+    return localStorage.getItem(API_KEY_STORAGE) || '';
+  }
+
+  function saveApiKey() {
+    const input = document.getElementById('apiKeyInput');
+    const key = input.value.trim();
+    if (!key.startsWith('sk-ant-')) {
+      input.style.borderColor = '#f87171';
+      input.placeholder = 'Must start with sk-ant-...';
+      setTimeout(() => { input.style.borderColor = ''; input.placeholder = 'sk-ant-api03-...'; }, 2000);
+      return;
+    }
+    localStorage.setItem(API_KEY_STORAGE, key);
+    document.getElementById('apiKeyOverlay').classList.remove('show');
+    updateApiKeyStatus();
+    if (window._pendingSearch) { window._pendingSearch = false; startSearch(); }
+  }
+
+  function showApiKeyModal() {
+    const existing = getApiKey();
+    const input = document.getElementById('apiKeyInput');
+    if (input && existing) input.value = existing;
+    const overlay = document.getElementById('apiKeyOverlay');
+    if (overlay) overlay.classList.add('show');
+    setTimeout(() => { if (input) input.focus(); }, 100);
+  }
+
+  function overlayClickClose(e) {
+    if (e.target.id === 'apiKeyOverlay') {
+      document.getElementById('apiKeyOverlay').classList.remove('show');
+    }
+  }
+
+  function updateApiKeyStatus() {
+    const key = getApiKey();
+    const dot = document.getElementById('apiKeyDot');
+    const txt = document.getElementById('apiKeyStatusText');
+    if (!dot || !txt) return;
+    if (key) {
+      dot.classList.remove('missing');
+      txt.textContent = 'API: ....' + key.slice(-4);
+    } else {
+      dot.classList.add('missing');
+      txt.textContent = '⚠ Set API Key';
+    }
+  }
+
   let selectedChips = [];
   let allMods = [];
   let currentLang = 'en';
@@ -3114,6 +3165,8 @@ Search the web for the missing ones and return ONLY valid JSON (no markdown, no 
   // Boot
   window.addEventListener('load', async () => {
     setLang('en');
+    updateApiKeyStatus();
+    if (!getApiKey()) setTimeout(() => showApiKeyModal(), 600);
     await runAutoUpdate(false);
     setInterval(async () => {
       sessionStorage.removeItem(UPDATE_STORAGE_KEY);
@@ -3231,65 +3284,6 @@ self.addEventListener('fetch', e => {
     if (fi) fi.style.display = ftbPacks.includes(val) ? 'block' : 'none';
     if (ai) ai.style.display = atlPacks.includes(val) ? 'block' : 'none';
   }
-
-
-  // ── API KEY MANAGEMENT ───────────────────────────────────────────────
-  const API_KEY_STORAGE = 'uf_api_key';
-
-  function getApiKey() {
-    return localStorage.getItem(API_KEY_STORAGE) || '';
-  }
-
-  function saveApiKey() {
-    const input = document.getElementById('apiKeyInput');
-    const key = input.value.trim();
-    if (!key.startsWith('sk-ant-')) {
-      input.style.borderColor = '#f87171';
-      input.placeholder = 'Must start with sk-ant-...';
-      setTimeout(() => { input.style.borderColor = ''; }, 2000);
-      return;
-    }
-    localStorage.setItem(API_KEY_STORAGE, key);
-    document.getElementById('apiKeyOverlay').classList.remove('show');
-    updateApiKeyStatus();
-    // If there was a pending search, re-trigger
-    if (window._pendingSearch) { window._pendingSearch = false; startSearch(); }
-  }
-
-  function showApiKeyModal() {
-    const input = document.getElementById('apiKeyInput');
-    const existing = getApiKey();
-    if (existing) input.value = existing;
-    document.getElementById('apiKeyOverlay').classList.add('show');
-    setTimeout(() => input.focus(), 100);
-  }
-
-  function overlayClickClose(e) {
-    if (e.target.id === 'apiKeyOverlay') {
-      document.getElementById('apiKeyOverlay').classList.remove('show');
-    }
-  }
-
-  function updateApiKeyStatus() {
-    const key = getApiKey();
-    const dot = document.getElementById('apiKeyDot');
-    const txt = document.getElementById('apiKeyStatusText');
-    if (key) {
-      dot.classList.remove('missing');
-      txt.textContent = 'API: sk-ant-...' + key.slice(-4);
-    } else {
-      dot.classList.add('missing');
-      txt.textContent = '⚠ Set API Key';
-    }
-  }
-
-  // Show modal on load if no key saved
-  window.addEventListener('load', () => {
-    updateApiKeyStatus();
-    if (!getApiKey()) {
-      setTimeout(() => showApiKeyModal(), 800);
-    }
-  });
 
 </script>
 
