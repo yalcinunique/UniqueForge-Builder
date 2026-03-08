@@ -2318,6 +2318,20 @@
       ? `\n\nIMPORTANT LANGUAGE RULE: The user wrote in ${langNames[outputLang]||'English'}. You MUST write ALL text fields (packName, description, mod descriptions, installSteps, warnings, playstyle, funFactor, whyFun, suggestedNextMods) in ${langNames[outputLang]||'English'}. EXCEPTION: mod "name", "category" values, "priority" values, and all URLs must stay in English.`
       : '';
 
+    // Build launcher context
+    const isTechnic = ['Technic','Tekkit Classic','Tekkit Legends','Hexxit','Attack of the B-Team','Voltz','Blightfall'].includes(modLoader);
+    const isFTB     = ['FTB','FTB Revelation','FTB Infinity Evolved','FTB Academy'].includes(modLoader);
+    const isATL     = modLoader === 'ATLauncher';
+
+    let launcherContext = '';
+    if (isTechnic) {
+      launcherContext = `\n\nLAUNCHER: ${modLoader} (Technic Platform) — focus on Technic/Tekkit ecosystem mods, include technicpack.net URLs where possible.`;
+    } else if (isFTB) {
+      launcherContext = `\n\nLAUNCHER: ${modLoader} (Feed The Beast) — include FTB-typical mods like Thermal Expansion, Applied Energistics 2, Tinkers Construct, Botania.`;
+    } else if (isATL) {
+      launcherContext = `\n\nLAUNCHER: ATLauncher — supports CurseForge and Modrinth packs. Include both curseforge and modrinth URLs for every mod.`;
+    }
+
     const prompt = `You are an expert Minecraft modpack curator and game designer. Generate an exciting, fun, well-balanced mod list in JSON format.
 
 User's dream: "${dream}"${chipText}
@@ -2381,33 +2395,51 @@ PRIORITY: essential 7-9 (core), recommended 9-12 (enhancing), optional 4-7 (bonu
       if (!response.ok) throw new Error('API hatası: ' + response.status);
 
       const data = await response.json();
+
+      // Handle stop_reason: max_tokens (truncated response)
+      if (data.stop_reason === 'max_tokens') {
+        console.warn('Response truncated — trying to recover partial JSON');
+      }
+
       const text = data.content.map(b => b.text || '').join('');
 
       let jsonText = text.replace(/```json|```/g, '').trim();
-      // extract JSON object
       const start = jsonText.indexOf('{');
-      const end = jsonText.lastIndexOf('}');
-      if (start !== -1 && end !== -1) {
+      let end = jsonText.lastIndexOf('}');
+
+      // If truncated, try to close the JSON manually
+      if (start !== -1 && end === -1) {
+        jsonText = jsonText.substring(start);
+        // Count open brackets to attempt recovery
+        let depth = 0;
+        for (const ch of jsonText) { if (ch==='{' || ch==='[') depth++; else if (ch==='}' || ch===']') depth--; }
+        while (depth > 0) { jsonText += '}'; depth--; }
+        end = jsonText.length - 1;
+      } else if (start !== -1 && end !== -1) {
         jsonText = jsonText.substring(start, end + 1);
+      } else {
+        throw new Error('No JSON in response');
       }
 
       const result = JSON.parse(jsonText);
-
-      // Wait for animation to feel natural
-      await new Promise(r => setTimeout(r, 1000));
+      if (!result.mods || !Array.isArray(result.mods) || result.mods.length === 0) {
+        throw new Error('Empty mod list returned');
+      }
 
       completeLoadingInstantly();
-      // Small pause so progress bar hits 100% visually before transition
       await new Promise(r => setTimeout(r, 300));
       showResults(result, mcVersion, modLoader);
 
     } catch (err) {
-      console.error(err);
+      console.error('startSearch error:', err);
+      completeLoadingInstantly();
       document.getElementById('loadingSection').classList.remove('visible');
       document.getElementById('inputSection').style.display = 'block';
-      errorBox.textContent = LANGS[currentLang].errApi + err.message + LANGS[currentLang].errRetry;
+      const msg = err.message || 'Unknown error';
+      errorBox.textContent = LANGS[currentLang].errApi + msg + LANGS[currentLang].errRetry;
       errorBox.classList.add('visible');
       setStep(1);
+      clearLoadingTimers();
     }
   }
 
