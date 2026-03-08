@@ -1,8 +1,5 @@
 # 🛠️ UniqueForge Builder
 ### AI-Powered & Modern Minecraft Modpack Generator
-
-![UniqueForge Banner](https://via.placeholder.com/800x200?text=UniqueForge+Builder+Modern+Interface)
-
 **UniqueForge Builder** is a web-based tool designed for Minecraft players and server administrators. It allows users to craft custom modpacks in seconds, utilizing a modern interface and intelligent algorithms to streamline the modding process.
 
 ---
