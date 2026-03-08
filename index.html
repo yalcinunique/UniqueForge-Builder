@@ -163,7 +163,7 @@
   .badge.active { border-color: var(--purple); color: var(--purple); background: rgba(124,58,237,0.15); }
 
   /* LANGUAGE PANEL */
-  .lang-panel { position: relative; margin-left: 16px; }
+  .lang-panel { position: relative; margin-left: auto; }
 
   .lang-toggle {
     display: flex;
@@ -1092,6 +1092,163 @@
 
   @media (max-width: 480px) {
     .config-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .mc-bg {
+      background-attachment: scroll;
+      background-position: 60% center;
+    }
+  }
+  @media (max-width: 640px) {
+
+    /* Base */
+    .container { padding: 0 12px; }
+
+    /* Header */
+    header { padding: 12px 0 10px; }
+    .header-inner { gap: 8px; flex-wrap: nowrap; }
+    .logo-block { gap: 2px; }
+    .logo-title { font-size: 15px; letter-spacing: 1px; }
+    .logo-sub { font-size: 8px; letter-spacing: 1px; display: none; }
+    .header-badges { display: none; }
+    .lang-toggle { padding: 5px 8px; font-size: 11px; gap: 4px; }
+    .lang-arrow { display: none; }
+    .lang-dropdown { right: 0; left: auto; min-width: 160px; }
+
+    /* Steps bar */
+    .steps {
+      gap: 4px;
+      padding: 10px 8px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .steps::-webkit-scrollbar { display: none; }
+    .step { min-width: 60px; gap: 4px; }
+    .step-num { width: 24px; height: 24px; font-size: 9px; }
+    .step span { font-size: 7px; letter-spacing: 0.5px; }
+    .step-line { min-width: 16px; flex: 0 0 16px; }
+
+    /* Input section */
+    .input-section, .loading-section, .results-section {
+      padding: 16px 14px;
+      border-radius: 3px;
+      margin-bottom: 12px;
+    }
+    .section-label { font-size: 9px; letter-spacing: 2px; }
+    .section-title { font-size: 18px; }
+    .section-desc { font-size: 13px; line-height: 1.5; }
+
+    /* Snapshot toggle */
+    .snapshot-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .snapshot-toggle-group { width: 100%; }
+    .snap-btn { flex: 1; justify-content: center; padding: 8px 10px; font-size: 12px; }
+    .snapshot-info { font-size: 9px; margin-left: 0; }
+
+    /* Config row */
+    .config-row { grid-template-columns: 1fr; gap: 10px; }
+    .config-group label { font-size: 10px; }
+    .config-group select { font-size: 13px; padding: 9px 12px; }
+
+    /* Version picker */
+    .version-mode-row { width: 100%; }
+    .vmode-btn { padding: 7px 10px; font-size: 10px; }
+
+    /* Textarea */
+    .dream-textarea { font-size: 14px; min-height: 100px; padding: 12px; }
+
+    /* Chips */
+    .suggestion-chips { gap: 6px; }
+    .chip { font-size: 12px; padding: 5px 10px; }
+
+    /* Submit button */
+    .submit-btn {
+      font-size: 14px;
+      padding: 14px;
+      letter-spacing: 1px;
+    }
+    .submit-btn::after { display: none; }
+
+    /* Loading */
+    .loading-title { font-size: 13px; }
+    .loading-step-item span { font-size: 12px; }
+
+    /* Summary card */
+    .summary-card { padding: 16px; }
+    .pack-name { font-size: 18px; }
+    .pack-desc { font-size: 13px; }
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 10px; }
+    .stat-value { font-size: 18px; }
+    .stat-label { font-size: 9px; }
+    .meta-tags { flex-wrap: wrap; gap: 6px; }
+
+    /* Filter bar */
+    .filter-bar {
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 12px;
+    }
+    .filter-label { width: 100%; font-size: 9px; margin-bottom: 2px; }
+    .filter-btn { font-size: 11px; padding: 5px 10px; flex: 1; text-align: center; }
+
+    /* Mod cards */
+    .mod-card {
+      grid-template-columns: 1fr;
+      padding: 12px;
+      gap: 10px;
+    }
+    .mod-num { display: none; }
+    .mod-header { flex-wrap: wrap; gap: 6px; }
+    .mod-name { font-size: 14px; }
+    .mod-desc { font-size: 12px; }
+    .mod-details { flex-wrap: wrap; gap: 6px; }
+    .mod-detail { font-size: 10px; }
+    .mod-actions { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+    .mod-link { font-size: 11px; padding: 5px 10px; flex: 1; text-align: center; }
+    .priority-badge { font-size: 9px; padding: 2px 7px; }
+
+    /* Install guide */
+    .install-guide { padding: 16px; }
+    .install-title { font-size: 13px; }
+    .install-step { padding: 10px 12px; font-size: 12px; gap: 10px; }
+    .install-num { width: 24px; height: 24px; font-size: 10px; flex-shrink: 0; }
+
+    /* Action row */
+    .action-row { flex-direction: column; gap: 8px; }
+    .action-btn { width: 100%; font-size: 13px; padding: 13px; }
+
+    /* Update banner */
+    .update-banner { padding: 12px; }
+    .update-banner-title { font-size: 10px; }
+    .update-banner-body { font-size: 12px; }
+    .apply-update-btn { width: 100%; font-size: 12px; padding: 10px; }
+
+    /* Footer */
+    footer { padding: 14px 0; }
+    .footer-inner { flex-direction: column; gap: 8px; align-items: flex-start; font-size: 9px; }
+    .update-status { font-size: 9px; }
+    .update-btn { width: 20px; height: 20px; font-size: 11px; }
+
+    /* Warnings */
+    .warning-box { font-size: 12px; padding: 10px 12px; }
+  }
+
+  /* Extra small phones */
+  @media (max-width: 380px) {
+    .logo-title { font-size: 13px; }
+    .section-title { font-size: 16px; }
+    .filter-btn { font-size: 10px; padding: 5px 7px; }
+    .snap-btn { font-size: 11px; }
+    .stat-value { font-size: 15px; }
   }
 </style>
 
