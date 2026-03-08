@@ -936,23 +936,26 @@
     var prompt = 'You are an expert Minecraft modpack curator. Generate an exciting modpack in JSON.\n\nUser dream: "' + dream + '"' + chipText + '\n\nMinecraft: ' + mcVersion + '\nLoader: ' + modLoader + '\nPerformance: ' + perf + launcherCtx + langInstr + '\n\nRules:\n- 20-26 real mods from CurseForge/Modrinth\n- Include fun surprise mods, synergies, atmosphere mods\n- Every mod earns its place\n\nRespond ONLY valid JSON:\n{"packName":"...","description":"...","totalMods":0,"estimatedRAM":"4 GB","difficulty":"Medium","playstyle":"...","funFactor":"...","mods":[{"id":1,"name":"...","category":"Technology","priority":"essential","description":"...","whyFun":"...","curseforge":"https://www.curseforge.com/minecraft/mc-mods/slug","modrinth":"https://modrinth.com/mod/slug","technic":null,"version_compatible":true,"downloads":"10M+","author":"..."}],"installSteps":["Step 1","Step 2","Step 3","Step 4","Step 5"],"warnings":[],"suggestedNextMods":["mod1","mod2","mod3"]}\n\nPriority: essential 7-9, recommended 9-12, optional 4-7.';
 
     try {
-      var response = await fetch('https://text.pollinations.ai/', {
+      var response = await fetch('https://text.pollinations.ai/openai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'openai',
           messages: [
-            { role: 'system', content: 'You are a Minecraft modpack expert. Always respond with valid JSON only. No markdown fences, no extra text, just the JSON object.' },
+            { role: 'system', content: 'You are a Minecraft modpack expert. Respond ONLY with a valid JSON object. No markdown, no explanation, no text outside the JSON.' },
             { role: 'user', content: prompt }
           ],
-          seed: Math.floor(Math.random() * 99999),
-          jsonMode: true
+          temperature: 0.7,
+          seed: Math.floor(Math.random() * 99999)
         })
       });
 
-      if (!response.ok) throw new Error('Server error ' + response.status + ' — try again');
+      if (!response.ok) throw new Error('Service error ' + response.status + ' — please try again');
 
-      var rawText = await response.text();
+      var data = await response.json();
+      var rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
+        ? data.choices[0].message.content
+        : (typeof data === 'string' ? data : JSON.stringify(data));
       var jsonText = rawText.replace(/```json|```/g, '').trim();
       var start = jsonText.indexOf('{');
       var end = jsonText.lastIndexOf('}');
