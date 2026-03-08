@@ -2,6 +2,9 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2796,13 +2799,13 @@ PRIORITY: essential 7-9 (core), recommended 9-12 (enhancing), optional 4-7 (bonu
   let updateCache = null;
   let pendingUpdate = null;
 
-  const UPDATE_STORAGE_KEY = 'uniqueforge_update_cache';
-  const VERSION_STORAGE_KEY  = 'uniqueforge_versions';
-  const UPDATE_TTL_MS  = 6  * 60 * 60 * 1000;  // 6h  — loader AI data
-  const VERSION_TTL_MS = 24 * 60 * 60 * 1000;  // 24h — Mojang version list
+  var UPDATE_STORAGE_KEY = 'uniqueforge_update_cache';
+  var VERSION_STORAGE_KEY = 'uniqueforge_versions';
+  var UPDATE_TTL_MS = 6 * 60 * 60 * 1000;
+  var VERSION_TTL_MS = 24 * 60 * 60 * 1000;
 
   // Mojang official version manifest (no auth needed, CORS-enabled)
-  const MOJANG_MANIFEST = 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json';
+  var MOJANG_MANIFEST = 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json';
 
   function setUpdateStatus(state, text) {
     const dot = document.getElementById('updateDot');
@@ -3244,11 +3247,19 @@ self.addEventListener('fetch', e => {
 });
 `;
 
-  if ('serviceWorker' in navigator) {
-    const swBlob = new Blob([SW_CODE], {type: 'application/javascript'});
-    const swURL = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swURL).catch(console.warn);
-  }
+  // Aggressively clear ALL service workers and caches on every load
+  (function() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        regs.forEach(function(r) { r.unregister(); });
+      });
+    }
+    if (window.caches) {
+      window.caches.keys().then(function(keys) {
+        keys.forEach(function(k) { window.caches.delete(k); });
+      });
+    }
+  })();
 
   // ── Install prompt ────────────────────────────────────
   let deferredPrompt = null;
